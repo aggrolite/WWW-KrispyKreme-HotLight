@@ -1,7 +1,7 @@
 package WWW::KrispyKreme::Hotlight;
 
 use 5.008_005;
-use Moose;
+use Mojo::Base -base;
 
 use URI;
 use WWW::Mechanize;
@@ -10,13 +10,13 @@ use Mojo::JSON;
 
 our $VERSION = '0.01';
 
-has where => (is => 'rw', isa => 'ArrayRef[Num]');
+has 'where';
 
-has locations => (is => 'rw', lazy => 1, builder => '_build_locations');
+has locations => \&_build_locations;
 
 sub _build_locations {
     my ($self) = @_;
-    my $geo = $self->{where} or return [];
+    my $geo = $self->where or return [];
 
     my $mech = WWW::Mechanize->new;
     my $uri = URI->new('http://locations.krispykreme.com/Store-Locator/');
