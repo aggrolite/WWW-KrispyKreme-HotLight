@@ -12,7 +12,7 @@
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
       "version" : "2"
    },
-   "name" : "WWW-KrispyKreme-Hotlight",
+   "name" : "WWW-KrispyKreme-HotLight",
    "no_index" : {
       "directory" : [
          "t",
@@ -62,7 +62,7 @@
          "web" : "https://github.com/aggrolite/WWW-KrispyKreme-HotLight"
       }
    },
-   "version" : "0.01",
+   "version" : "0.02",
    "x_contributors" : [
       "Curtis Brandt <curtisjbrandt@gmail.com>"
    ]

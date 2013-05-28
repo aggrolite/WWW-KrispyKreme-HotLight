@@ -1,6 +1,6 @@
 use strict;
 use Test::More;
-use WWW::KrispyKreme::Hotlight;
+use WWW::KrispyKreme::HotLight;
 
 # replace with the actual test
 ok 1;

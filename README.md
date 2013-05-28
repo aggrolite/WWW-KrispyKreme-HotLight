@@ -1,12 +1,12 @@
 # NAME
 
-WWW::KrispyKreme::Hotlight - Fetch Krispy Kreme locations near a given geolocation!
+WWW::KrispyKreme::HotLight - Fetch Krispy Kreme locations near a given geolocation!
 
 # SYNOPSIS
 
-    use WWW::KrispyKreme::Hotlight;
+    use WWW::KrispyKreme::HotLight;
 
-    my $donuts = WWW::KrispyKreme::Hotlight->new(where => [34.170833,-118.25]);
+    my $donuts = WWW::KrispyKreme::HotLight->new(where => [34.170833,-118.25]);
 
     # get array ref of all the krispy kreme locations near given geo
     my $stores = $donuts->locations;
@@ -29,7 +29,7 @@ WWW::KrispyKreme::Hotlight - Fetch Krispy Kreme locations near a given geolocati
 
 # DESCRIPTION
 
-WWW::KrispyKreme::Hotlight is a Perl wrapper for Krispy Kreme's location search
+WWW::KrispyKreme::HotLight is a Perl wrapper for Krispy Kreme's location search
 page.  This module will return an array ref of hash refs which contain info for
 all the Krispy Kreme stores near the given geolocation.
 
@@ -37,10 +37,10 @@ all the Krispy Kreme stores near the given geolocation.
 
 ## new
 
-Creates a new WWW::KrispyKreme::Hotlight object.  Currently the only REQUIRED
+Creates a new WWW::KrispyKreme::HotLight object.  Currently the only REQUIRED
 option is 'where' and only supports geo
 
-    my $donuts = WWW::KrispyKreme::Hotlight->new(where => [34.170833,-118.25]);
+    my $donuts = WWW::KrispyKreme::HotLight->new(where => [34.170833,-118.25]);
 
 ## locations
 
