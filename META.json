@@ -37,8 +37,8 @@
       "runtime" : {
          "requires" : {
             "HTML::TreeBuilder::XPath" : "0.0",
+            "Mojo::Base" : "0.0",
             "Mojo::JSON" : "0.0",
-            "Moose" : "0.0",
             "URI" : "0.0",
             "WWW::Mechanize" : "0.0",
             "perl" : "5.008005"
@@ -62,7 +62,7 @@
          "web" : "https://github.com/aggrolite/WWW-KrispyKreme-HotLight"
       }
    },
-   "version" : "0.02",
+   "version" : "0.01",
    "x_contributors" : [
       "Curtis Brandt <curtisjbrandt@gmail.com>"
    ]

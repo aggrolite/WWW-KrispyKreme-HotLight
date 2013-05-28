@@ -1,6 +1,6 @@
 requires 'perl', '5.008005';
 
-requires 'Moose',                    '0.0';
+requires 'Mojo::Base',               '0.0';
 requires 'URI',                      '0.0';
 requires 'WWW::Mechanize',           '0.0';
 requires 'HTML::TreeBuilder::XPath', '0.0';
