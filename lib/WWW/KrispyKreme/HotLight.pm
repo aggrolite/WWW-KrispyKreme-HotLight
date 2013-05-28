@@ -8,7 +8,7 @@ use WWW::Mechanize;
 use HTML::TreeBuilder::XPath;
 use Mojo::JSON;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 has 'where';
 
