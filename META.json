@@ -4,7 +4,7 @@
       "Curtis Brandt <curtis@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.2, Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.130880",
+   "generated_by" : "Dist::Milla version v1.0.2, Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -37,8 +37,8 @@
       "runtime" : {
          "requires" : {
             "HTML::TreeBuilder::XPath" : "0.0",
-            "Mojo::Base" : "0.0",
-            "Mojo::JSON" : "0.0",
+            "Mojo::Base" : "0",
+            "Mojo::JSON" : "0",
             "URI" : "0.0",
             "WWW::Mechanize" : "0.0",
             "perl" : "5.008005"

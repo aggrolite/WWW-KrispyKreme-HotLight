@@ -1,6 +1,7 @@
 Revision history for WWW-KrispyKreme-Hotlight
 
 {{$NEXT}}
+        - replace mojo prereq versions as '0' to avoid cpanm version errors
 
 0.02  2013-05-28 08:54:05 PDT
         - Rename as WWW::Krispy::Kreme::HotLight
