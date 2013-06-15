@@ -13,14 +13,14 @@ WWW::KrispyKreme::HotLight - Fetch Krispy Kreme locations near a given geolocati
 
     foreach my $store (@$stores) {
 
-      # boolean value which shows if the Hot Light is on now!
-      my $is_fresh = $store->{hotLightOn};
+        # boolean value which shows if the Hot Light is on now!
+        my $is_fresh = $store->{hotLightOn};
 
-      # store name (Burbank, Los Angeles, etc)
-      my $store_name = $store->{title};
+        # store name (Burbank, Los Angeles, etc)
+        my $store_name = $store->{title};
 
-      # geolocation of store
-      my $geo = $store->{geoLocation};
+        # geolocation of store
+        my $geo = $store->{geoLocation};
 
         # shortened krispy kreme link to the location page!
         # i.e. http://kkre.me/okjGVT
