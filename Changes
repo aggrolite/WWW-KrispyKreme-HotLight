@@ -2,6 +2,9 @@ Revision history for WWW-KrispyKreme-Hotlight
 
 {{$NEXT}}
 
+0.04  2013-06-15 10:11:39 PDT
+        - add test: donuts.t
+
 0.03  2013-06-11 10:41:02 PDT
         - replace mojo prereq versions as '0' to avoid cpanm version errors
 
