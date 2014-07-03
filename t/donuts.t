@@ -3,6 +3,7 @@ use warnings;
 
 use Test::More;
 use WWW::KrispyKreme::HotLight;
+use Test::RequiresInternet ('krispykreme.com' => 80);
 
 can_ok('WWW::KrispyKreme::HotLight',qw(new locations));
 
