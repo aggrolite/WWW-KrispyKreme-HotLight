@@ -2,6 +2,9 @@ Revision history for WWW-KrispyKreme-Hotlight
 
 {{$NEXT}}
 
+0.06  2014-07-14 09:19:01 PDT
+        - switch to a faster, all-Mojo class
+
 0.05  2014-07-03 10:22:57 PDT
         - require Test::RequiresInternet on test
         - switch to MIT license

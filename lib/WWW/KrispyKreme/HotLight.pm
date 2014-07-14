@@ -3,7 +3,7 @@ package WWW::KrispyKreme::HotLight;
 use Mojo::Base -base;
 use Mojo::UserAgent;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 has 'where';
 
