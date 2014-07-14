@@ -1,12 +1,7 @@
 package WWW::KrispyKreme::HotLight;
 
-use 5.008_005;
 use Mojo::Base -base;
-
-use URI;
-use WWW::Mechanize;
-use HTML::TreeBuilder::XPath;
-use Mojo::JSON;
+use Mojo::UserAgent;
 
 our $VERSION = '0.05';
 
@@ -18,28 +13,20 @@ sub _build_locations {
     my ($self) = @_;
     my $geo = $self->where or return [];
 
-    my $mech = WWW::Mechanize->new;
-    my $uri = URI->new('http://locations.krispykreme.com/Store-Locator/');
-    $uri->query_form(
-        {   lat => $geo->[0],
-            lng => $geo->[1],
-        }
-    );
-    $mech->add_header('X-Requested-With' => 'XMLHttpRequest');
+    my $ua           = Mojo::UserAgent->new;
+    my $base_url     = 'http://locations.krispykreme.com/Store-Locator/';
+    my $hotlight_url = 'http://locations.krispykreme.com/Hotlight/HotLightStatus.ashx';
+    my $header       = {'X-Requested-With' => 'XMLHttpRequest'};
+    my $form         = {lat => $geo->[0], lng => $geo->[1]};
 
-    my $c = $mech->get($uri->as_string);
-    my $tree = HTML::TreeBuilder::XPath->new_from_content($c->decoded_content);
+    my $locations = join ',',
+      $ua->get($base_url => $header => form => $form)
+      ->res->dom->find('.content-results')->attr('id')->each;
 
-    my $locations = join ',', $tree->findvalues(    #
-        './/div[@class="content-locations"]//div[@class="content-results"]/@id'
-    ) or return [];
-
-    $mech->add_header(Referer => $uri->host);
-    my $status_uri = URI->new('http://locations.krispykreme.com/Hotlight/HotLightStatus.ashx');
-    $c = $mech->post($status_uri->as_string, Content => {locations => $locations});
-    return [] unless $mech->success;
-
-    my $json = Mojo::JSON->new->decode($c->decoded_content);
+    my $json = $locations && $ua->post(
+        $hotlight_url => {%$header, Referer => $base_url}
+          => form => {locations => $locations}
+    )->res->json;
 
     return $json && $json->{status} eq 'success'
       ? [@{$json->{data}{locations}}]
