@@ -2,6 +2,9 @@ Revision history for WWW-KrispyKreme-Hotlight
 
 {{$NEXT}}
 
+1.0  2015-11-24 22:49:02 PST
+        - Support new API
+
 0.06  2014-07-14 09:19:01 PDT
         - switch to a faster, all-Mojo class
 
