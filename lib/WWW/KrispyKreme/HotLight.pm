@@ -2,6 +2,7 @@ package WWW::KrispyKreme::HotLight;
 
 use Mojo::Base -base;
 use Mojo::UserAgent;
+use Mojo::JSON ();
 
 our $VERSION = '0.06';
 
@@ -13,24 +14,32 @@ sub _build_locations {
     my ($self) = @_;
     my $geo = $self->where or return [];
 
+    my $search = {
+        Where => {
+            LocationTypes => ['Store', 'Commissary', 'Franchise'],
+            OpeningDate => {ComparisonType => 0}
+        },
+        # This is important. Otherwise we receive ALL locations.
+        Take => {Min => 3, DistanceRadius => 100},
+        PropertyFilters =>
+          {Attributes => ['FoursquareVenueId', 'OpeningType']},
+    };
+
     my $ua           = Mojo::UserAgent->new;
-    my $base_url     = 'http://locations.krispykreme.com/Store-Locator/';
-    my $hotlight_url = 'http://locations.krispykreme.com/Hotlight/HotLightStatus.ashx';
-    my $header       = {'X-Requested-With' => 'XMLHttpRequest'};
-    my $form         = {lat => $geo->[0], lng => $geo->[1]};
+    my $hotlight_url = 'http://services.krispykreme.com/api/locationsearchresult/';
+    my $header       = {'Referer' => 'http://www.krispykreme.com/Locate/Location-Search'};
+    my $form = {
+        lat          => $geo->[0],
+        lng          => $geo->[1],
+        responseType => 'Full',
+        search => Mojo::JSON::encode_json($search),
+    };
 
-    my $locations = join ',',
-      $ua->get($base_url => $header => form => $form)
-      ->res->dom->find('.content-results')->attr('id')->each;
-
-    my $json = $locations && $ua->post(
-        $hotlight_url => {%$header, Referer => $base_url}
-          => form => {locations => $locations}
+    my $json = $ua->get(
+        $hotlight_url => $header => form => $form,
     )->res->json;
 
-    return $json && $json->{status} eq 'success'
-      ? [@{$json->{data}{locations}}]
-      : [];
+    [map $_->{Location}, @$json];
 }
 
 1;
@@ -54,17 +63,23 @@ WWW::KrispyKreme::HotLight - Fetch Krispy Kreme locations near a given geolocati
   foreach my $store (@$stores) {
 
       # boolean value which shows if the Hot Light is on now!
-      my $is_fresh = $store->{hotLightOn};
+      my $is_fresh = $store->{Hotlight};
+
+      # Does this store serve coffee?
+      my $has_coffee = $store->{OffersCoffee};
+
+      # And WiFi?
+      my $has_wifi = $store->{OffersWifi};
 
       # store name (Burbank, Los Angeles, etc)
-      my $store_name = $store->{title};
+      my $store_name = $store->{Name};
 
       # geolocation of store
-      my $geo = $store->{geoLocation};
+      my $lat = $store->{Latitude};
+      my $lon = $store->{Longitude};
 
-      # shortened krispy kreme link to the location page!
-      # i.e. http://kkre.me/okjGVT
-      my $url = $store->{url};
+      # Direct link to store page
+      my $url = $store->{DetailUrl};
   }
 
 =head1 DESCRIPTION
@@ -85,74 +100,93 @@ option is 'where' and only supports geo
 =head2 locations
 
 Returns an array ref of hash refs.  Each hash ref represents a store near the
-given geolocation.  A structure will look like this:
+given geolocation.  The structure of one location entry should look like this:
 
-    [   {   'storeHours2' => '',
-            'locationId'  => '993',
-            'hotLightOn'  => '0',
-            'storeHours1' => '',
-            'phone'       => '818-955-9015',
-            'zipcode'     => '91504',
-            'state'       => 'CA',
-            'city'        => 'Burbank',
-            'geoLocation' => '34.190000,-118.330000',
-            'url'         => 'http://kkre.me/oXMuQQ',
-            'title'       => 'Burbank',
-            'address'     => '1521 North Victory Place'
-        },
-        {   'storeHours2' => '',
-            'locationId'  => '985',
-            'hotLightOn'  => '0',
-            'storeHours1' => '',
-            'phone'       => '323-291-4133',
-            'zipcode'     => '90008',
-            'state'       => 'CA',
-            'city'        => 'Los Angeles',
-            'geoLocation' => '34.010000,-118.340000',
-            'url'         => 'http://kkre.me/pF3cuI',
-            'title'       => 'Los Angeles',
-            'address'     => '4034 Crenshaw Boulevard'
-        },
-        {   'storeHours2' => '',
-            'locationId'  => '4502',
-            'hotLightOn'  => '0',
-            'storeHours1' => '',
-            'phone'       => '310-393-8319',
-            'zipcode'     => '90403',
-            'state'       => 'CA',
-            'city'        => 'Santa Monica',
-            'geoLocation' => '34.030000,-118.490000',
-            'url'         => 'http://kkre.me/okjGVT',
-            'title'       => 'Santa Monica',
-            'address'     => '1231 Wilshire Boulevard'
-        },
-        {   'storeHours2' => '',
-            'locationId'  => '984',
-            'hotLightOn'  => '0',
-            'storeHours1' => '',
-            'phone'       => '310-532-5281',
-            'zipcode'     => '90248',
-            'state'       => 'CA',
-            'city'        => 'Gardena',
-            'geoLocation' => '33.870000,-118.290000',
-            'url'         => 'http://kkre.me/r55gEc',
-            'title'       => 'Gardena',
-            'address'     => '1199 W. Artesia Boulevard'
-        },
-        {   'storeHours2' => '',
-            'locationId'  => '989',
-            'hotLightOn'  => '0',
-            'storeHours1' => '',
-            'phone'       => '626-964-5044',
-            'zipcode'     => '91748',
-            'state'       => 'CA',
-            'city'        => 'City of Industry',
-            'geoLocation' => '34.000000,-117.930000',
-            'url'         => 'http://kkre.me/pnyzpu',
-            'title'       => 'City Of Industry',
-            'address'     => '1548 Azusa Avenue'
+    {
+        "Location" => {
+            "Id"              => 204,
+            "LocationNumber"  => 1020,
+            "Name"            => "Mountain View",
+            "Slug"            => "mountain-view",
+            "DetailUrl"       => "http://krispykreme.com/location/mountain-view",
+            "LocationType"    => "Franchise",
+            "Address1"        => "2146 Leghorn Street",
+            "Address2"        => "",
+            "City"            => "Mountain View",
+            "Province"        => "CA",
+            "PostalCode"      => "94043",
+            "Country"         => "US",
+            "PhoneNumber"     => "(650) 254-1231",
+            "Latitude"        => 37.419002,
+            "Longitude"       => -122.094216,
+            "FundraisingType" => "Online",
+            "Hotlight"        => 0,
+            "OffersCoffee"    => 1,
+            "OffersWifi"      => 0,
+            "ExtendedDetails" => {
+                "Description" => "",
+                "Message" =>
+                  "Hi. Thanks for stopping by your local Krispy Kreme store. Virtually, of course. Now you can see where we are and what we have going on. Oh, and be sure to LIKE us on Facebook and FOLLOW us on Twitter while you're here. It'd really mean a lot."
+            },
+            "Attributes" => {},
+            "LocationHours" => {
+                "Store Hours" => [
+                    {
+                        "DaysOfWeek"      => 31,
+                        "DaysOfWeekAlias" => "Sun-Thu",
+                        "Times" =>
+                          [{"StartTime" => "06:00:00", "EndTime" => "22:00:00"}]
+                    },
+                    {
+                        "DaysOfWeek"      => 96,
+                        "DaysOfWeekAlias" => "Fri,Sat",
+                        "Times" =>
+                          [{"StartTime" => "06:00:00", "EndTime" => "23:00:00"}]
+                    }
+                ],
+                "Drive-Thru Hours" => [
+                    {
+                        "DaysOfWeek"      => 31,
+                        "DaysOfWeekAlias" => "Sun-Thu",
+                        "Times" =>
+                          [{"StartTime" => "06:00:00", "EndTime" => "23:00:00"}]
+                    },
+                    {
+                        "DaysOfWeek"      => 32,
+                        "DaysOfWeekAlias" => "Fri",
+                        "Times" =>
+                          [{"StartTime" => "06:00:00", "EndTime" => "00:00:00"}]
+                    },
+                    {
+                        "DaysOfWeek"      => 64,
+                        "DaysOfWeekAlias" => "Sat",
+                        "Times" =>
+                          [{"StartTime" => "00:00:00", "EndTime" => "00:00:00"}]
+                    }
+                ],
+                "Hot Light Hours" => [
+                    {
+                        "DaysOfWeek"      => 31,
+                        "DaysOfWeekAlias" => "Sun-Thu",
+                        "Times"           => [
+                            {"StartTime" => "06:00:00", "EndTime" => "09:00:00"},
+                            {"StartTime" => "17:00:00", "EndTime" => "20:00:00"}
+                        ]
+                    },
+                    {
+                        "DaysOfWeek"      => 96,
+                        "DaysOfWeekAlias" => "Fri,Sat",
+                        "Times"           => [
+                            {"StartTime" => "06:00:00", "EndTime" => "10:00:00"},
+                            {"StartTime" => "17:00:00", "EndTime" => "21:00:00"}
+                        ]
+                    }
+                ]
+            },
+            "OpeningDate"    => undef,
+            "OpeningDateTBD" => 0
         }
-    ]
+    }
 
 =cut
 

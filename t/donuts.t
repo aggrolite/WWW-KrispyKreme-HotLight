@@ -15,7 +15,26 @@ isa_ok($donuts,         'WWW::KrispyKreme::HotLight');
 isa_ok($locations,      'ARRAY');
 isa_ok($locations->[0], 'HASH');
 
-my @keys = qw(locationId hotLightOn phone zipcode state city geoLocation url title address);
+my @keys = qw(
+  Id
+  LocationNumber
+  Name
+  Slug
+  DetailUrl
+  LocationType
+  Address1
+  Address2
+  City
+  Latitude
+  Longitude
+  Hotlight
+  OffersCoffee
+  OffersWifi
+  LocationHours
+);
 ok(exists $locations->[0]{$_}, "$_ hash key exists") for @keys;
+
+# Make sure our filter is working. This comes from the 'search' parameter now present in the API
+ok($_->{Province} =~ /^(?:TN|GA|AL)$/, 'Each location is in TN/GA/AL') for @$locations;
 
 done_testing;
