@@ -4,7 +4,7 @@ use Mojo::Base -base;
 use Mojo::UserAgent;
 use Mojo::JSON ();
 
-our $VERSION = '1.0';
+our $VERSION = '1.1';
 
 has 'where';
 
