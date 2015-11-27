@@ -37,9 +37,8 @@
       },
       "runtime" : {
          "requires" : {
-            "Mojo::Base" : "0",
-            "Mojo::UserAgent" : "0",
-            "perl" : "5.008005"
+            "Mojolicious" : "6.0",
+            "perl" : "5.010001"
          }
       },
       "test" : {
